@@ -6,32 +6,43 @@ import java.awt.Graphics;
 public class GuessWordFrame extends javax.swing.JFrame {
 
     //class variables
+    private int gameState = 0;
     private String randomWord = "";
     private String guesses = "";
     private String output = "";
     private String lookFor = "";
-    
+    private int wrongGuesses = 0;
+    private int wins = -1;
+    private int losses = 0;
+
     public GuessWordFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        String show=getShowWord(randomWord,guesses);
+        String show = getShowWord(randomWord, guesses);
         System.out.println(show);
 
     }
 
     public String getShowWord(String randomWord, String guesses) {
-        for(int i = 0;i < guesses.length();i++){
-          lookFor = guesses.substring(i,i+1);
-          for(int j = 0;j < randomWord.length(); j++){
-            String temp =randomWord.substring(j,j+1);    //could be more efficient if using indexOf
-            if (temp.equals(lookFor))
-              output =output.substring(0, j)+lookFor+output.substring(j + 1); 
-          }
+        for (int i = 0; i < guesses.length(); i++) {
+            lookFor = guesses.substring(i, i + 1);
+            for (int j = 0; j < randomWord.length(); j++) {
+                String temp = randomWord.substring(j, j + 1);    //could be more efficient if using indexOf
+                if (temp.equals(lookFor)) {
+                    output = output.substring(0, j) + lookFor + output.substring(j + 1);
+
+                }
+            }
+
         }
-        return(output);
+        if (output.equals(randomWord)) {
+            wrongGuesses = 10000000;
+            drawStuff();
+
+        }
+        return (output);
     }
-    
-   
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -64,12 +75,19 @@ public class GuessWordFrame extends javax.swing.JFrame {
         buttonY = new javax.swing.JButton();
         buttonZ = new javax.swing.JButton();
         buttonTest = new javax.swing.JButton();
+        textReveal = new javax.swing.JTextField();
         panelDraw = new javax.swing.JPanel();
         textfieldDisplay = new javax.swing.JTextField();
         textfieldGuessed = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        textWins = new javax.swing.JTextField();
+        textLosses = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuGame = new javax.swing.JMenu();
         menuStartGame = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -255,7 +273,7 @@ public class GuessWordFrame extends javax.swing.JFrame {
             }
         });
 
-        buttonTest.setText("test");
+        buttonTest.setText("Houston, we have a problem (reveals answer) ===>");
         buttonTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonTestActionPerformed(evt);
@@ -269,6 +287,10 @@ public class GuessWordFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(buttonTest, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(textReveal, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(buttonW, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -321,8 +343,7 @@ public class GuessWordFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(buttonY, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(buttonZ, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(buttonTest, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(buttonZ, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -361,7 +382,9 @@ public class GuessWordFrame extends javax.swing.JFrame {
                     .addComponent(buttonY)
                     .addComponent(buttonZ))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(buttonTest))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonTest)
+                    .addComponent(textReveal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout panelDrawLayout = new javax.swing.GroupLayout(panelDraw);
@@ -380,8 +403,19 @@ public class GuessWordFrame extends javax.swing.JFrame {
 
         textfieldGuessed.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
 
+        jLabel1.setText("Warning: Loading could take up to 10 seconds. Please wait.");
+
+        textWins.setText("0");
+
+        textLosses.setText("0");
+
+        jLabel2.setText("Wins");
+
+        jLabel3.setText("Losses");
+
         menuGame.setText("Game");
 
+        menuStartGame.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK));
         menuStartGame.setText("Start Game");
         menuStartGame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -389,6 +423,15 @@ public class GuessWordFrame extends javax.swing.JFrame {
             }
         });
         menuGame.add(menuStartGame);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK));
+        jMenuItem2.setText("Restart Game");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        menuGame.add(jMenuItem2);
 
         jMenuBar1.add(menuGame);
 
@@ -406,7 +449,19 @@ public class GuessWordFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(textfieldDisplay)
-                            .addComponent(textfieldGuessed, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(textfieldGuessed, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel1)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2)
+                                            .addComponent(jLabel3))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(textLosses, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(textWins, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -420,6 +475,16 @@ public class GuessWordFrame extends javax.swing.JFrame {
                         .addComponent(textfieldDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(textfieldGuessed, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1)
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(textWins, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(textLosses, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -430,168 +495,368 @@ public class GuessWordFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAActionPerformed
-        String s="abcdefghijklmnopqrstuvwxyz";
+        String s = "abcdefghijklmnopqrstuvwxyz";
         //System.out.println( s.substring(0,1) );
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
+
+
     }//GEN-LAST:event_buttonAActionPerformed
 
     private void buttonCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonCActionPerformed
 
     private void buttonBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonBActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonBActionPerformed
 
-    private void buttonTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestActionPerformed
-        drawStuff();
-    }//GEN-LAST:event_buttonTestActionPerformed
-
     private void buttonDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonDActionPerformed
 
     private void buttonEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonEActionPerformed
 
     private void buttonFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonFActionPerformed
 
     private void buttonGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonGActionPerformed
 
     private void buttonHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonHActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonHActionPerformed
 
     private void buttonIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonIActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonIActionPerformed
 
     private void buttonJActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonJActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonJActionPerformed
 
     private void buttonKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonKActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonKActionPerformed
 
     private void buttonLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonLActionPerformed
 
     private void buttonMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonMActionPerformed
 
     private void buttonNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonNActionPerformed
 
     private void buttonOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonOActionPerformed
 
     private void buttonPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonPActionPerformed
 
     private void buttonQActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonQActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonQActionPerformed
 
     private void buttonRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonRActionPerformed
 
     private void buttonSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonSActionPerformed
 
     private void buttonTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonTActionPerformed
 
     private void buttonUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonUActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonUActionPerformed
 
     private void buttonVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonVActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonVActionPerformed
 
     private void buttonWActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonWActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonWActionPerformed
 
     private void buttonXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonXActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonXActionPerformed
 
     private void buttonYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonYActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonYActionPerformed
 
     private void buttonZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZActionPerformed
-        handleButton(evt);
+        if (gameState == 1) {
+            handleButton(evt);
+        }
     }//GEN-LAST:event_buttonZActionPerformed
 
     private void menuStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStartGameActionPerformed
-        randomWord = getWord();         System.out.println(randomWord);
-        for(int k = 0; k < randomWord.length(); k++){
-            output = output +"-";   
+        wrongGuesses = -3;
+        drawStuff();
+        randomWord = getWord();
+        System.out.println(randomWord);
+        wrongGuesses = -2;
+        drawStuff();
+        try {
+            int secondsToSleep = 1;
+            Thread.sleep(1000 * secondsToSleep);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+        gameState = 1;
+        for (int k = 0; k < randomWord.length(); k++) {
+            output = output + "-";
+
+        }
+        wrongGuesses = -1;
+        drawStuff();
+        try {
+            int secondsToSleep = 1;
+            Thread.sleep(1000 * secondsToSleep);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
         }
         textfieldDisplay.setText(output);
+        wrongGuesses = 1;
+        drawStuff();
+        drawStuff();
     }//GEN-LAST:event_menuStartGameActionPerformed
-    
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+
+        gameEnd();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void buttonTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTestActionPerformed
+        textReveal.setText("Answer is: " + randomWord);
+    }//GEN-LAST:event_buttonTestActionPerformed
+
     private String getWord() {
-        String url="https://RequiredAccuratePacket.theensphere.repl.co";
-        String wordList=WebReader.readWebPage(url,true);
+        String url = "https://RequiredAccuratePacket.theensphere.repl.co";
+        String wordList = WebReader.readWebPage(url, true);
         String cWord = "";
-        int randomPosition = (int) (Math.random() * wordList.length() + 0); 
-        cWord = wordList.substring(randomPosition+1);
+        int randomPosition = (int) (Math.random() * wordList.length() + 0);
+        cWord = wordList.substring(randomPosition + 1);
         randomPosition = cWord.indexOf(" ");
-        cWord = cWord.substring(randomPosition+1);
+        cWord = cWord.substring(randomPosition + 1);
         randomPosition = cWord.indexOf(" ");
-        cWord = cWord.substring(0,randomPosition);
-        return(cWord);
+        cWord = cWord.substring(0, randomPosition);
+        return (cWord);
     }
-    
-    
+
     public void drawStuff() {
-        Graphics g =panelDraw.getGraphics();
-        g.setColor(Color.BLUE );
-        g.fillRect(0,0, panelDraw.getWidth(), panelDraw.getHeight() );
+        Graphics g = panelDraw.getGraphics();
+        g.setColor(Color.black);
+        g.fillRect(0, 0, panelDraw.getWidth(), panelDraw.getHeight());
         g.setColor(Color.WHITE);
-        g.fillOval(100,100, 30,30);
-        g.setFont( new Font("Arial", Font.BOLD, 40));
-        g.drawString("Hello", 200,50);
+        switch (wrongGuesses) {
+            case -3:
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Loading:3", 50, 50);
+                break;
+            case -2:
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Loading:2", 50, 50);
+                break;
+            case -1:
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Loading:1", 50, 50);
+                break;
+
+            case 6:
+                g.fillOval(130, 200, 50, 50);
+                break;
+            case 5:
+                g.fillOval(130, 200, 50, 50);
+                g.fillOval(133, 170, 45, 45);
+                break;
+            case 4:
+                g.fillOval(130, 200, 50, 50);
+                g.fillOval(133, 170, 45, 45);
+                g.fillOval(136, 150, 40, 40);
+                break;
+            case 3:
+                g.fillOval(130, 200, 50, 50);
+                g.fillOval(133, 170, 45, 45);
+                g.fillOval(136, 150, 40, 30);
+                break;
+            case 2:
+                g.fillOval(130, 200, 50, 50);
+                g.fillOval(133, 170, 45, 45);
+                g.fillOval(136, 150, 40, 40);
+                g.setColor(Color.black);
+                g.fillOval(137, 160, 8, 8);
+                break;
+            case 1:
+                g.fillOval(130, 200, 50, 50);
+                g.fillOval(133, 170, 45, 45);
+                g.fillOval(136, 150, 40, 40);
+                g.setColor(Color.black);
+                g.fillOval(138, 160, 8, 8);
+                g.fillOval(160, 160, 8, 8);
+                break;
+            case 7:
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Not Good Job.", 50, 50);
+                textReveal.setText("Answer: " + randomWord);
+                gameEnd();
+                losses++;
+                textLosses.setText("" + losses);
+                break;
+            case 10000000:
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                g.drawString("Good Job.", 50, 50);
+                wins++;
+                textWins.setText("" + wins);
+                break;
+
+        }
+        //g.fillOval(100,100, 30,30);
+        //g.setFont( new Font("Arial", Font.BOLD, 40));
+        //g.drawString("Hello", 200,50);
     }
-    public void handleButton(java.awt.event.ActionEvent evt){
-        javax.swing.JButton butt=(javax.swing.JButton)evt.getSource();
-        String text=butt.getText();
+
+    public void handleButton(java.awt.event.ActionEvent evt) {
+        javax.swing.JButton butt = (javax.swing.JButton) evt.getSource();
+        String text = butt.getText();
         butt.setEnabled(false);
         letterPressed(text);
+        if (output == randomWord) {
+
+        }
+
+        int temp = 0;
+        System.out.println(randomWord);
+        for (int i = 0; i < randomWord.length(); i++) {
+            if (text.equals(randomWord.substring(i, i + 1))) {
+                temp++;
+                System.out.println(temp);
+            }
+        }
+
+        if (temp == 0) {
+            System.out.println("RAN");
+            wrongGuesses++;
+            System.out.println(wrongGuesses);
+            drawStuff();
+        }
+
     }
-    
+
     public void letterPressed(String letter) {
         System.out.println(letter);
         guesses = guesses + letter;
-        String show=getShowWord(randomWord,guesses);
+        String show = getShowWord(randomWord, guesses);
         textfieldDisplay.setText(show);
         textfieldGuessed.setText(guesses);
+
     }
-    
-    
- 
-    
+
+    public void gameEnd() {
+        gameState = 0;
+        textfieldDisplay.setText("START A GAME");
+        randomWord = "";
+        guesses = "";
+        output = "";
+        lookFor = "";
+        wrongGuesses = 0;
+        textfieldGuessed.setText(guesses);
+        buttonA.setEnabled(true);
+        buttonB.setEnabled(true);
+        buttonC.setEnabled(true);
+        buttonD.setEnabled(true);
+        buttonE.setEnabled(true);
+        buttonF.setEnabled(true);
+        buttonG.setEnabled(true);
+        buttonH.setEnabled(true);
+        buttonI.setEnabled(true);
+        buttonJ.setEnabled(true);
+        buttonK.setEnabled(true);
+        buttonL.setEnabled(true);
+        buttonM.setEnabled(true);
+        buttonN.setEnabled(true);
+        buttonO.setEnabled(true);
+        buttonP.setEnabled(true);
+        buttonQ.setEnabled(true);
+        buttonR.setEnabled(true);
+        buttonS.setEnabled(true);
+        buttonT.setEnabled(true);
+        buttonU.setEnabled(true);
+        buttonV.setEnabled(true);
+        buttonW.setEnabled(true);
+        buttonX.setEnabled(true);
+        buttonY.setEnabled(true);
+        buttonZ.setEnabled(true);
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+        /*   Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
@@ -648,12 +913,23 @@ public class GuessWordFrame extends javax.swing.JFrame {
     private javax.swing.JButton buttonX;
     private javax.swing.JButton buttonY;
     private javax.swing.JButton buttonZ;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JMenu menuGame;
     private javax.swing.JMenuItem menuStartGame;
     private javax.swing.JPanel panelDraw;
+    private javax.swing.JTextField textLosses;
+    private javax.swing.JTextField textReveal;
+    private javax.swing.JTextField textWins;
     private javax.swing.JTextField textfieldDisplay;
     private javax.swing.JTextField textfieldGuessed;
     // End of variables declaration//GEN-END:variables
+
+    private void enableButton() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
