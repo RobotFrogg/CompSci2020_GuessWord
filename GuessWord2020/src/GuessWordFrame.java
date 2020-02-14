@@ -400,6 +400,11 @@ public class GuessWordFrame extends javax.swing.JFrame {
 
         textfieldDisplay.setFont(new java.awt.Font("Monospaced", 0, 24)); // NOI18N
         textfieldDisplay.setText("START A GAME");
+        textfieldDisplay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textfieldDisplayActionPerformed(evt);
+            }
+        });
 
         textfieldGuessed.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
 
@@ -695,6 +700,10 @@ public class GuessWordFrame extends javax.swing.JFrame {
         textReveal.setText("Answer is: " + randomWord);
     }//GEN-LAST:event_buttonTestActionPerformed
 
+    private void textfieldDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textfieldDisplayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textfieldDisplayActionPerformed
+
     private String getWord() {
         String url = "https://RequiredAccuratePacket.theensphere.repl.co";
         String wordList = WebReader.readWebPage(url, true);
@@ -702,7 +711,7 @@ public class GuessWordFrame extends javax.swing.JFrame {
         int randomPosition = (int) (Math.random() * wordList.length() + 0);
         cWord = wordList.substring(randomPosition + 1);
         randomPosition = cWord.indexOf(" ");
-        cWord = cWord.substring(randomPosition + 1);
+        cWord = cWord.substring(randomPosition + 2);
         randomPosition = cWord.indexOf(" ");
         cWord = cWord.substring(0, randomPosition);
         return (cWord);
